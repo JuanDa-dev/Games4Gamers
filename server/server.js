@@ -13,8 +13,6 @@ const players = {}
 const socketToRoom = {};
 
 app.get('/colorsAll/:roomID')
-app.get('/pingPong/:roomID')
-app.get('/spaceInvaders')
 
 //Server configuration
 //socket.io configuration 
@@ -38,8 +36,8 @@ io.on('connection', socket => {
     socket.on("join-room", data => {
         players[data.roomID].push(data);
         const user = players[data.roomID][0];
-        socket.emit("first-user", user);
-        io.to(user.id).emit("second-user", data);
+        socket.emit("rival", user);
+        io.to(user.id).emit("rival", data);
     })
 
     socket.on('change-color', data => {

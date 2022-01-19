@@ -1,53 +1,115 @@
-import { useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect } from "react";
 import '../CSS/pingPong.css'
-import Phaser from 'phaser'
-//import socket from "../components/socket";
-import Bootloader from "../phaser/bootloader";
-import Scene_play from '../phaser/scenes/scene_play';
-import ImageURILoaderPlugin from 'phaser3-rex-plugins/plugins/imageuriloader-plugin.js';
+import { useNavigate } from 'react-router-dom'
+import Ball from "../componentsPingPong/ball";
+import Paddle from "../componentsPingPong/paddle";
+import Swal from 'sweetalert2'
 
 const PingPong = () => {
-    let { roomID } = useParams();
-    const isAdmin = window.location.hash === "#init";
-    const rival = useRef();
-    const config = {
-        parent: 'container',
-        physics: {
-            default: 'arcade',
-            arcade: {
-                debug: false
-            }
-        },
-        plugins: {
-            global: [{
-                key: 'rexImageURILoader',
-                plugin: ImageURILoaderPlugin,
-                start: true
-            },
-                // ...
-            ]
-        },
-        scene: [
-            Bootloader,
-            Scene_play
-        ]
-    }
+    let navigate = useNavigate();
 
     useEffect(() => {
-        new Phaser.Game(config);
-        /* if (isAdmin) {
-            socket.emit('create-room', { id: socket.id, roomID });
-        } else {
-            socket.emit('join-room', { id: socket.id, roomID });
+        const ball = new Ball(document.getElementById('ball'));
+        const playerPaddle = new Paddle(document.getElementById("player-paddle"))
+        const rivalPaddle = new Paddle(document.getElementById("rival-paddle"))
+        const playerScoreElem = document.getElementById("player-score")
+        const rivalScoreElem = document.getElementById("rival-score")
+        rivalScoreElem.textContent = -1;
+        const keys = {
+            ArrowUp: { paddle: rivalPaddle, value: -5, pressed: false },
+            ArrowDown: { paddle: rivalPaddle, value: 5, pressed: false },
+            w: { paddle: playerPaddle, value: -5, pressed: false },
+            s: { paddle: playerPaddle, value: 5, pressed: false },
         }
-        socket.on('first-user', user => { rival.current = user; });
-        socket.on('second-user', user => { rival.current = user; }); */
+
+        let lastTime;
+        function update(time) {
+            if (playerScoreElem.textContent < 10 && rivalScoreElem.textContent < 10) {
+                if (lastTime !== null) {
+                    const delta = time - lastTime;
+                    ball.update(delta, [playerPaddle.rect(), rivalPaddle.rect()]);
+
+                    const hue = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--hue"))
+                    document.documentElement.style.setProperty("--hue", hue + (Math.random() * (100 - 8) + 8) * 0.01)
+
+                    if (isLose()) handleLose()
+                }
+
+                lastTime = time;
+                window.requestAnimationFrame(update);
+            } else {
+                Swal.fire({
+                    title: 'Juego Terminado',
+                    text: 'Desea jugar de nuevo?',
+                    showCancelButton: true,
+                    focusConfirm: false,
+                    confirmButtonText: 'Aceptar',
+                    cancelButtonText: 'Cancelar',
+                    allowOutsideClick: false
+                }).then(r => {
+                    if (r.isConfirmed) {
+                        playerScoreElem.textContent = 0;
+                        rivalScoreElem.textContent = 0;
+                        ball.reset();
+                        playerPaddle.reset();
+                        rivalPaddle.reset();
+                        lastTime = null;
+                        window.requestAnimationFrame(update);
+                    } else {
+                        navigate("/");
+                    }
+                })
+            }
+        }
+
+        function isLose() {
+            const rect = ball.rect()
+            return rect.right >= window.innerWidth || rect.left <= 0
+        }
+
+        function handleLose() {
+            const rect = ball.rect()
+            if (rect.right >= window.innerWidth) {
+                playerScoreElem.textContent = parseInt(playerScoreElem.textContent) + 1
+            } else {
+                rivalScoreElem.textContent = parseInt(rivalScoreElem.textContent) + 1
+            }
+            ball.reset()
+        }
+
+        onkeydown = e => {
+            const clave = keys[e.key];
+            if (clave) {
+                clave.pressed = true;
+                for (let key in keys) {
+                    const k = keys[key];
+                    if (k.pressed && ((k.paddle.position < 95 && k.value > 0) || (k.paddle.position > 5 && k.value < 0))) {
+                        k.paddle.position += k.value;
+                    }
+                }
+            }
+        }
+
+        onkeyup = e => {
+            keys[e.key].pressed = false;;
+        }
+
+        window.requestAnimationFrame(update);
     }, []);
 
+
+
     return (
-        <div style={{ padding: '20px', height: '100vh' }} className="row align-items-center">
-            <div id='container' className="principal"></div>
+        <div style={{ height: '100vh' }} className="row align-items-center">
+            <div id='container' className="principal">
+                <div className="score">
+                    <div id="player-score">0</div>
+                    <div id="rival-score">0</div>
+                </div>
+                <div className="ball" id="ball"></div>
+                <div className="paddle left" id="player-paddle"></div>
+                <div className="paddle right" id="rival-paddle"></div>
+            </div>
         </div>
     );
 }
