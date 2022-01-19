@@ -1,5 +1,10 @@
 import Particles from 'react-tsparticles';
 
+/**
+ * 
+ * 
+ */
+
 const Fondo = () => {
     return (
         <Particles
