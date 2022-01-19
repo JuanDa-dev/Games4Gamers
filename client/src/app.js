@@ -12,7 +12,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/colorsAll/:roomID" element={<ColorsAll />} />
         <Route path="/spaceInvaders" element={<SpaceInvaders />} />
-        <Route path="/pingPong/:roomID" element={<PingPong />} />
+        <Route path="/pingPong" element={<PingPong />} />
         <Route path="*" exact={true} element={<Error404 />} />
       </Routes>
     </BrowserRouter>
