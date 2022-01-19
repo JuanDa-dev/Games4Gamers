@@ -2,7 +2,7 @@ import Particles from 'react-tsparticles';
 
 /**
  * 
- * 
+ * This component allow us to show particles in a background of the page 
  */
 
 const Fondo = () => {

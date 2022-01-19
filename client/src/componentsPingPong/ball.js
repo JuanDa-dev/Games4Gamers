@@ -1,6 +1,10 @@
 const INITIAL_VELOCITY = 0.025
 const VELOCITY_INCREASE = 0.00001
 
+/**
+ * This components represent the logic of the ball in ping pong game about the ball movement and collisions with the paddles and the walls of the game board. 
+ */
+
 export default class Ball {
     constructor(ballElem) {
         this.ballElem = ballElem

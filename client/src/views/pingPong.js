@@ -5,6 +5,11 @@ import Ball from "../componentsPingPong/ball";
 import Paddle from "../componentsPingPong/paddle";
 import Swal from 'sweetalert2'
 
+/**
+ *  This is all the logic of the ping pong retro game.
+ * @returns {string}
+ */
+
 const PingPong = () => {
     let navigate = useNavigate();
 
@@ -61,12 +66,17 @@ const PingPong = () => {
                 })
             }
         }
-
+        /**
+         * This function is used to check if the ball is out of the screen. 
+         * @returns {boolean}
+         */
         function isLose() {
             const rect = ball.rect()
             return rect.right >= window.innerWidth || rect.left <= 0
         }
-
+        /**
+         * This function is used to handle the lose event.
+         */
         function handleLose() {
             const rect = ball.rect()
             if (rect.right >= window.innerWidth) {

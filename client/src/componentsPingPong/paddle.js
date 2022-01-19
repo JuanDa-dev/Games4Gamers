@@ -1,5 +1,9 @@
 const SPEED = 0.02
 
+/**
+ * This component represent the paddles or rackets of the game.
+ */
+
 export default class Paddle {
     constructor(paddleElem) {
         this.paddleElem = paddleElem

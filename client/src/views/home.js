@@ -8,7 +8,10 @@ import React, { useEffect } from 'react';
 import { v1 as uuid } from 'uuid'
 import socket from '../components/socket'
 import swal from 'sweetalert2'
-
+/**
+ *  This is the primary component of the home page. It contains the background image, the buttons to select the others games. 
+ * @returns {JSX.Element} 
+ */
 const Home = () => {
     let navigate = useNavigate();
 
