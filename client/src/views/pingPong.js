@@ -27,6 +27,30 @@ const PingPong = () => {
             s: { paddle: playerPaddle, value: 5, pressed: false },
         }
 
+        const reiniciar = () => {
+            Swal.fire({
+                title: 'Game Over',
+                text: 'Do you want to play again?',
+                showCancelButton: true,
+                focusConfirm: false,
+                confirmButtonText: 'Aceppt',
+                cancelButtonText: 'Cancel',
+                allowOutsideClick: false
+            }).then(r => {
+                if (r.isConfirmed) {
+                    playerScoreElem.textContent = 0;
+                    rivalScoreElem.textContent = 0;
+                    ball.reset();
+                    playerPaddle.reset();
+                    rivalPaddle.reset();
+                    lastTime = null;
+                    window.requestAnimationFrame(update);
+                } else {
+                    navigate("/");
+                }
+            })
+        }
+
         let lastTime;
         function update(time) {
             if (playerScoreElem.textContent < 10 && rivalScoreElem.textContent < 10) {
@@ -43,27 +67,7 @@ const PingPong = () => {
                 lastTime = time;
                 window.requestAnimationFrame(update);
             } else {
-                Swal.fire({
-                    title: 'Juego Terminado',
-                    text: 'Desea jugar de nuevo?',
-                    showCancelButton: true,
-                    focusConfirm: false,
-                    confirmButtonText: 'Aceptar',
-                    cancelButtonText: 'Cancelar',
-                    allowOutsideClick: false
-                }).then(r => {
-                    if (r.isConfirmed) {
-                        playerScoreElem.textContent = 0;
-                        rivalScoreElem.textContent = 0;
-                        ball.reset();
-                        playerPaddle.reset();
-                        rivalPaddle.reset();
-                        lastTime = null;
-                        window.requestAnimationFrame(update);
-                    } else {
-                        navigate("/");
-                    }
-                })
+                reiniciar()
             }
         }
         /**
