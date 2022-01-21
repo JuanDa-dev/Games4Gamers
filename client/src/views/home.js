@@ -46,7 +46,7 @@ const Home = () => {
 
     return (
         <div className="up">
-            {/* <Fondo></Fondo> */}
+            <Fondo></Fondo>
             <div className='row content align-items-center justify-content-around'>
                 <div className="card col-md-3">
                     <img src={spaceInvadersImg} className="card-img-top" alt="spaceInvaders" />
