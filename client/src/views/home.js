@@ -17,7 +17,7 @@ const Home = () => {
 
     const joinRoom = (name) => {
         swal.fire({
-            title: "Ingrese el codigo de reunion",
+            title: "Type the room code",
             input: 'text',
             inputAttributes: {
                 autocapitalize: 'off'
@@ -31,7 +31,8 @@ const Home = () => {
     }
 
     useEffect(() => {
-        socket.on('room-exists', data => {
+        if (socket== null) return
+        const handler = data => {
             if (data.roomExists) {
                 if (data.roomFull) {
                     swal.fire("sala llena");
@@ -41,8 +42,12 @@ const Home = () => {
             } else {
                 swal.fire("sala inexistente");
             }
-        })
-    }, []);
+        }
+        socket.on('room-exists', handler)
+        return () => {
+            socket.off('room-exists', handler)
+        }
+    }, [socket]);
 
     return (
         <div className="up">
@@ -52,7 +57,7 @@ const Home = () => {
                     <img src={spaceInvadersImg} className="card-img-top" alt="spaceInvaders" />
                     <div className="row card-body justify-content-around">
                         <h5 className="card-title">Space Invaders</h5>
-                        <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <p className="card-text">A magic battle in the space when you need to destroy all the alien's ships that will try to destroy you. Try to survive! </p>
                         <Link to="/spaceInvaders" className="btn btn-primary col-md-5">Play</Link>
                     </div>
                 </div>
@@ -60,7 +65,7 @@ const Home = () => {
                     <img src={pingPongImg} className="card-img-top" alt="pingPong" />
                     <div className="row card-body justify-content-around">
                         <h5 className="card-title">Ping Pong</h5>
-                        <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <p className="card-text">A special remake about the classic retro-game Ping Pong with new a fresh textures</p>
                         <Link to="/pingPong" className="btn btn-primary col-md-5">Play</Link>
                     </div>
                 </div>
@@ -68,7 +73,7 @@ const Home = () => {
                     <img src={coloorsAllImg} className="card-img-top" alt="colorsAll" />
                     <div className="row card-body justify-content-around">
                         <h5 className="card-title">Colors All</h5>
-                        <p className="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <p className="card-text">Try coloring the board before your opponent, the faster will win.</p>
                         <button onClick={() => { joinRoom('colorsAll') }} className="btn btn-primary col-md-5">Join room</button>
                         <button onClick={() => { navigate(`/colorsAll/${uuid()}#init`); }} className="btn btn-primary col-md-5">Create room</button>
                     </div>
